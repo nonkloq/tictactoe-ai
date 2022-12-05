@@ -1,0 +1,57 @@
+<!-- Author: satz_._-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <title>TicTacToe</title>
+</head>
+<body style="background-color: #333A45;">
+    
+    <div class = "top-frame">
+        <button type="button" class="sr-btn" id="edit">Edit State</button>
+        
+        <h1 class="heading" id="head"></h1>
+        
+        <button type="button" class="sr-btn" id="sr"></button>
+    </div>
+    <div class="nerd-stats-box" id="nerd-stats"></div>
+    
+    <div class="board-container" id="container"></div>
+    
+    <div class="bottom-frame">
+        <div class="settings">
+            <input class="cbox" type="checkbox" id="ab-switch">
+            <label class="clabel" for="ab-switch"> AlphaBeta Prunning<label><br>
+            
+                
+                <input class="cbox" type="checkbox" id="d-switch" value="depth">
+                <label class ="clabel" for="d-switch">Depth Restriction<label>
+                    <input id="d-val" type="number" min="1" max="8" step="1" value="3" /> 
+                <input type="submit" for="d-val" value="Set" id="d-set">
+                <br>
+                
+                <label class="clabel" for="dimension-setter">Board Dimension</label>
+            <select class="selector"id="dimension-setter">
+                <option id="set-3" value="3" selected>3</option>
+                <option id="set-4" value="4">4</option>
+                <option id="set-5" value="5">5</option>
+            </select>
+        </div>
+        
+        
+    </div>
+    <p style="color: white;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;; font-size: 15px;">
+        TicTacToe - AI, using MinMax Algorithm.<br>
+        For board dimension above 3:<br>
+        Turn on <b>Alphabeta Prunning</b> or <b>Depth restriction</b>, or you can <b>Edit State</b> until fewer <b><i>(lesser or equal to 9)</i></b> empty cells remain, or else it will freeze your browser.
+        <br><br>Dimension above 3 is just for demonstration purposes. 
+    </p>
+    
+    
+</body>
+<script src="index.js"> </script>
+</html>
