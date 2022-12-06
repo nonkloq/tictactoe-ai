@@ -92,11 +92,11 @@ document.getElementById('d-switch').addEventListener('click',(e)=>{
 
 document.getElementById('d-set').addEventListener('click',(e)=>{
     let n = Number(document.getElementById('d-val').value);
-    if(n <=1) n =2;
+    if(n <1) n =1;
     else if(n>=10) n= 9;
 
     max_depth = n;
-    
+    document.getElementById('d-set').value = max_depth;
 })
 DOMedit.addEventListener("click",(e)=>{
     if (isEditable) EditMode();
@@ -358,7 +358,6 @@ function updateCellsIdx(){
         }
         c = c.slice(1,maxMatch);
     }
-    console.log(cellsIdx)
 }
 
 function colorBoard(idx,color){
@@ -378,7 +377,6 @@ function search(){
     
     for(let k=0;k<N;k++){
         if (!_moveAI(k,ai)) continue;
-        
         const [v,n101,n102] = minmax(false,1,MIN,MAX);
         _remove(k);
         if (v>value){
