@@ -122,8 +122,8 @@ function setupBoard(d =3,matchM = 3){
             matchM = dimension;
         }
         maxMatch = matchM;
-        updateCellsIdx()
     }
+    updateCellsIdx();
     document.getElementById('max-match').value = dix[maxMatch];
     if( dimension > 3){
         player = 'X';
