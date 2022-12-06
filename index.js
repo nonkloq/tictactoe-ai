@@ -399,11 +399,11 @@ function isTerminal(){
 function minmax(ismax,d,a,b){
     
     // Depth Check
+    expandedNodes+=1
     if (isDepth && d == max_depth){
         maxDepth = Math.max(maxDepth,d)
         return [utility.get(checkWinner(false)),null,null]
     }
-    expandedNodes+=1
     
     // Terminal Check 
     const [t, r] = isTerminal();
