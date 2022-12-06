@@ -96,7 +96,7 @@ document.getElementById('d-set').addEventListener('click',(e)=>{
     else if(n>=10) n= 9;
 
     max_depth = n;
-    document.getElementById('d-set').value = max_depth;
+    document.getElementById('d-val').value = max_depth;
 })
 DOMedit.addEventListener("click",(e)=>{
     if (isEditable) EditMode();
