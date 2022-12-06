@@ -1,12 +1,14 @@
 const MAX = Infinity;
 const MIN = -Infinity;
 let cellWHconf = {3:["170px","170px"],4:["125px","125px"],5:["100px","100px"]}
+let dix = {"three":3,"four":4,"five":5,3:"three",4:"four",5:"five"}
 
 let player= "X";
 let ai="O";
 
 let dimension;
 let N;
+let maxMatch;
 
 let expandedNodes;
 let maxDepth;
@@ -20,7 +22,7 @@ let pointr = 'N';
 let cellSwitch;
 let srButton;
 
-let utility = new Map([["D",0],["N",0]]);
+let utility = new Map([["D",0],["N",1]]);
 let max_depth = 3;
 
 let board;
@@ -79,19 +81,20 @@ function updateNS(val,move,a,b){
     </p>
     `
 }
-
+document.getElementById('ab-switch').checked = false;
 document.getElementById('ab-switch').addEventListener('click',(e)=>{
     isAlphaBeta = !isAlphaBeta;
 },false)
-
+document.getElementById('d-switch').checked = false;
 document.getElementById('d-switch').addEventListener('click',(e)=>{
     isDepth = !isDepth;
 },false)
 
 document.getElementById('d-set').addEventListener('click',(e)=>{
     let n = Number(document.getElementById('d-val').value);
-    if (dimension==5 && n>5) n=4;
-    else if(dimension==7 && n>3) n=3;
+    if(n <=1) n =2;
+    else if(n>=10) n= 9;
+
     max_depth = n;
     
 })
@@ -107,22 +110,29 @@ DOMdim.value =3;
 
 // ------------------------------------------------------------------------------------------------------------------
 
-function setupBoard(d =3){
-        
+function setupBoard(d =3,matchM = 3){
+    
     DOMboard.innerHTML = "";
     DOMboard.style.gridTemplateColumns = `repeat(${d}, auto)`
-    
     dimension = d;
+    N = dimension*dimension;
+    
+    if(matchM != maxMatch){
+        if (matchM>dimension) {
+            matchM = dimension;
+        }
+        maxMatch = matchM;
+        updateCellsIdx()
+    }
+    document.getElementById('max-match').value = dix[maxMatch];
     if( dimension > 3){
         player = 'X';
         ai = 'O';
     }
-    N = dimension*dimension;
     
     board = [];
     container = [];
 
-    updateCellsIdx()
     let [w,h] = cellWHconf[dimension];
     for(let i =0;i<N;i++) {
         board.push(" ")
@@ -168,14 +178,14 @@ function endMatch(winner){
     setHeading(msg);
 
     // Swap Players
-    if (dimension == 3) [player,ai] = [ai, player];
+    if (dimension == 3 || isDepth && isAlphaBeta) [player,ai] = [ai, player];
 
     DOMsrbtn.innerText = "New Match";
     srButton = true;
 }
 function startMatch(){
     utility.set(player,-1)
-    utility.set(ai,1)
+    utility.set(ai,2)
     
     cellSwitch = true;
     
@@ -189,8 +199,9 @@ function resetMatch(){
     isEdit = false;
     DOMedit.innerText = "Edit State";
     let newDimension = Number(DOMdim.value);
-    if (newDimension != dimension){
-        setupBoard(newDimension);
+    let newMaxMatch = dix[document.getElementById('max-match').value];
+    if (newDimension != dimension || newMaxMatch != maxMatch){
+        setupBoard(newDimension,newMaxMatch);
         return;
     }
     
@@ -290,25 +301,64 @@ function isSame(idxs){
     }
     return head;
 }
-function updateCellsIdx(){
-    cellsIdx = [null,null,null]
-
-    if (dimension == 3){
-        cellsIdx[0] = [[0,1,2],[3,4,5],[6,7,8]];
-        cellsIdx[1] = [[0,3,6],[1,4,7],[2,5,8]];
-        cellsIdx[2] = [[0,4,8],[2,4,6]];
-    }else if(dimension == 4){
-        cellsIdx[0] = [[0, 1, 2], [4, 5, 6], [8, 9, 10], [1, 2, 3], [5, 6, 7], [9, 10, 11], [4, 5, 6], [8, 9, 10], [12, 13, 14], [5, 6, 7], [9, 10, 11], [13, 14, 15]]
-        cellsIdx[1] = [[0, 4, 8], [1, 5, 9], [2, 6, 10], [1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12], [5, 9, 13], [6, 10, 14], [5, 9, 13], [6, 10, 14], [7, 11, 15]]
-        cellsIdx[2] = [[0, 5, 10], [2, 5, 8], [1, 6, 11], [3, 6, 9], [4, 9, 14], [6, 9, 12], [5, 10, 15], [7, 10, 13]]
-    } 
-    else if(dimension == 5){
-        cellsIdx[0] = [[0, 1, 2], [5, 6, 7], [10, 11, 12], [1, 2, 3], [6, 7, 8], [11, 12, 13], [2, 3, 4], [7, 8, 9], [12, 13, 14], [5, 6, 7], [10, 11, 12], [15, 16, 17], [6, 7, 8], [11, 12, 13], [16, 17, 18], [7, 8, 9], [12, 13, 14], [17, 18, 19], [10, 11,12], [15, 16, 17], [20, 21, 22], [11, 12, 13], [16, 17, 18], [21, 22, 23], [12, 13, 14], [17, 18, 19], [22, 23, 24]] 
-        cellsIdx[1] = [[0, 5, 10], [1, 6, 11], [2, 7, 12], [1, 6, 11], [2, 7, 12], [3, 8, 13], [2, 7, 12], [3, 8, 13], [4, 9, 14], [5, 10, 15], [6, 11, 16], [7, 12, 17], [6, 11, 16], [7, 12, 17], [8, 13, 18], [7, 12, 17], [8, 13, 18], [9, 14, 19], [10, 15, 20], [11, 16, 21], [12, 17, 22], [11, 16, 21], [12, 17, 22], [13, 18, 23], [12, 17, 22], [13, 18, 23], [14, 19, 24]] 
-        cellsIdx[2] = [[0, 6, 12], [2, 6, 10], [1, 7, 13], [3, 7, 11], [2, 8, 14], [4, 8, 12], [5, 11, 17], [7, 11, 15], [6, 12, 18], [8, 12, 16], [7, 13, 19], [9, 13, 17], [10, 16, 22], [12, 16, 20], [11, 17, 23], [13, 17, 21], [12, 18, 24], [14, 18, 22]]
-
+function _diagonals(box){
+    let l = []
+    let r = []
+    for(let i=0;i<maxMatch;i++){
+        l.push(box[i][i]);
+        r.push(box[maxMatch-i-1][i])
     }
+    return [l,r];
+}
+function _rowCols(box){
+    let r = [];
+    let c = [];
+    for (let i=0;i<maxMatch;i++){
+        let a=[]
+        let b=[]
+        for(let j =0;j<maxMatch;j++){
+            a.push(box[i][j]);
+            b.push(box[j][i]);
+        }
+        r.push(a);
+        c.push(b);
+    }
+    return [r,c];
+}
+function updateCellsIdx(){
+    cellsIdx = [[],[],[]]
+    let boarIdxs = [];
+    for (let i=0;i<N;i++) boarIdxs.push(i);
+    let p = 0;
+    let c = [];
+    
+    for(let i=dimension;i<=N;){
+        for(let n213=0;n213<maxMatch;n213++){
+            c.push(boarIdxs.slice(p,i))
+            p=i;
+            i+=dimension;
+        };
 
+        let j = 0;
+        let k = maxMatch;
+        while (j<k && k<=dimension){
+            let box  = []; 
+            for (let rw of c){
+                let cls = []
+                for (let a=j;a<k;a++) cls.push(rw[a]); 
+                box.push(cls)
+            }
+            j+=1
+            k+=1
+            let [row,column] = _rowCols(box);
+            let diag = _diagonals(box);
+            cellsIdx[0] = cellsIdx[0].concat(row)
+            cellsIdx[1] = cellsIdx[1].concat(column)
+            cellsIdx[2] = cellsIdx[2].concat(diag);
+        }
+        c = c.slice(1,maxMatch);
+    
+    }
 }
 
 function colorBoard(idx,color){
@@ -319,22 +369,41 @@ function colorBoard(idx,color){
 }
 // ==============================================================================================================
 function search(){
+    let value=MIN
+    let move=null;
+    let alpha = MIN;
+    let beta=MAX;
     maxDepth = 0;
     expandedNodes=0;
-    let v,m;
-    return minmax(true,0,MIN,MAX);
+    
+    for(let k=0;k<N;k++){
+        if (!_moveAI(k,ai)) continue;
+        
+        const [v,n101,n102] = minmax(false,1,MIN,MAX);
+        _remove(k);
+        if (v>value){
+            value = v;
+            move = k;
+            alpha = n101;
+            beta = n102;
+        }
+    }
+    
+    return [value,move,alpha,beta];
 }
 
 function isTerminal(){
     let x = checkWinner(false);
     if (x == "N") return [false, null];
-    return [true, [utility.get(x),null,null,null]]
+    return [true, [utility.get(x),null,null]]
 }
 
 function minmax(ismax,d,a,b){
+    
+    // Depth Check
     if (isDepth && d == max_depth){
         maxDepth = Math.max(maxDepth,d)
-        return [utility.get(checkWinner(false)), null,null,null]
+        return [utility.get(checkWinner(false)),null,null]
     }
     expandedNodes+=1
     
@@ -346,41 +415,37 @@ function minmax(ismax,d,a,b){
     }
     
     // Min-MAX
-    let move = null;
     let v;
     if (ismax){
         v = MIN
         for(let k=0;k<N;k++){
             if (!_moveAI(k,ai)) continue;
             
-            const [v2, m2,n101,n102] = minmax(false,d+1,a,b);
+            const [v2,n101,n102] = minmax(false,d+1,a,b);
             _remove(k);
 
-            if (v2 > v){
-                v = v2;
-                move = k;
-                if (isAlphaBeta) a = Math.max(a,v);
+            v = Math.max(v,v2)
+            if (isAlphaBeta) {
+                a = Math.max(a,v);
+                if (a>=b /**v>=b*/) break;
             }
-            if (isAlphaBeta && a>=b /**v>=b*/) break;
         }
     } else {
         v = MAX
         for(let k=0;k<N;k++){
             if (!_moveAI(k,player)) continue;
             
-            const [v2, m2,n101,n102] = minmax(true,d+1,a,b);
+            const [v2,n101,n102] = minmax(true,d+1,a,b);
             _remove(k);
 
-            if (v2 < v){
-                v = v2;
-                move = k;
-                if (isAlphaBeta) b = Math.min(b,v);
+            v = Math.min(v,v2)
+            if (isAlphaBeta) {
+                b = Math.min(b,v);
+                if (a>=b/**v<=a*/) break;
             }
-            if (isAlphaBeta && a>=b/**v<=a*/) break;
         }
-        
     }
-    return [v,move,a,b];
+    return [v,a,b];
 
 }
 
