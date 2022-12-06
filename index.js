@@ -123,7 +123,7 @@ function setupBoard(d =3,matchM = 3){
         }
         maxMatch = matchM;
     }
-    updateCellsIdx();
+    updateCellsIdx()
     document.getElementById('max-match').value = dix[maxMatch];
     if( dimension > 3){
         player = 'X';
@@ -357,8 +357,8 @@ function updateCellsIdx(){
             cellsIdx[2] = cellsIdx[2].concat(diag);
         }
         c = c.slice(1,maxMatch);
-    
     }
+    console.log(cellsIdx)
 }
 
 function colorBoard(idx,color){
