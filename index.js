@@ -157,10 +157,10 @@ function aiTurn(){
             resolve(search());
         });
         let [value, m,a,b] = await p;
-        move(m,true);
-        cellSwitch = true
+        cellSwitch = true;
         isEditable = true;    
         updateNS(value,m,a,b);
+        move(m,true);
     })();
 
 }
