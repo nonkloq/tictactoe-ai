@@ -1,7 +1,7 @@
 ## TicTacToe - AI
 With AlphaBeta pruning, Depth Restriction, and Board State editing mode.
 
-Available Board SIze: `3x3`, `4x4` & `5x5`
+Available Board Size: `3x3`, `4x4` & `5x5`
 
 Matching Cells: `3`, `4` &` 5`
 
