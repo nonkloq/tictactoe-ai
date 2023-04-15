@@ -157,9 +157,9 @@ function aiTurn(){
             resolve(search());
         });
         let [value, m,a,b] = await p;
-        cellSwitch = true;
-        isEditable = true;    
         updateNS(value,m,a,b);
+        cellSwitch = true
+        isEditable = true;    
         move(m,true);
     })();
 
@@ -206,7 +206,7 @@ function resetMatch(){
     }
     
     for (let k =0;k<N;k++){
-        container[k].style.background = "#DADBDC";
+    	container[k].style.background = "#5E81AC";
         board[k] = " ";
         container[k].innerText = "";
     }
@@ -269,8 +269,8 @@ function checkWinner(game=true){
             let winner = isSame(idxs);
             if (winner != " ") {
                 if (game){
-                    if (winner == player) colorBoard(idxs,"green");
-                    else colorBoard(idxs,"red");
+                    if (winner == player) colorBoard(idxs,"#A3BE8C");
+                    else colorBoard(idxs,"#BF616A");
                 } 
                 return winner;
             } 
@@ -280,7 +280,7 @@ function checkWinner(game=true){
     if (isNoSpace()){
         if(game){
             for(let i=0;i<N;i++){
-            container[i].style.background = "yellow";
+            container[i].style.background = "#EBCB8B";
         }
         }
         return "D";
