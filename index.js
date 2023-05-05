@@ -301,63 +301,48 @@ function isSame(idxs){
     }
     return head;
 }
-function _diagonals(box){
-    let l = []
-    let r = []
-    for(let i=0;i<maxMatch;i++){
-        l.push(box[i][i]);
-        r.push(box[maxMatch-i-1][i])
-    }
-    return [l,r];
-}
-function _rowCols(box){
-    let r = [];
-    let c = [];
-    for (let i=0;i<maxMatch;i++){
-        let a=[]
-        let b=[]
-        for(let j =0;j<maxMatch;j++){
-            a.push(box[i][j]);
-            b.push(box[j][i]);
-        }
-        r.push(a);
-        c.push(b);
-    }
-    return [r,c];
-}
-function updateCellsIdx(){
-    cellsIdx = [[],[],[]]
-    let boarIdxs = [];
-    for (let i=0;i<N;i++) boarIdxs.push(i);
-    let p = 0;
-    let c = [];
-    
-    for(let i=dimension;i<=N;){
-        for(let n213=0;n213<maxMatch;n213++){
-            c.push(boarIdxs.slice(p,i))
-            p=i;
-            i+=dimension;
-        };
 
-        let j = 0;
-        let k = maxMatch;
-        while (j<k && k<=dimension){
-            let box  = []; 
-            for (let rw of c){
-                let cls = []
-                for (let a=j;a<k;a++) cls.push(rw[a]); 
-                box.push(cls)
-            }
-            j+=1
-            k+=1
-            let [row,column] = _rowCols(box);
-            let diag = _diagonals(box);
-            cellsIdx[0] = cellsIdx[0].concat(row)
-            cellsIdx[1] = cellsIdx[1].concat(column)
-            cellsIdx[2] = cellsIdx[2].concat(diag);
-        }
-        c = c.slice(1,maxMatch);
-    }
+
+function updateCellsIdx(){
+    cellsIdx = [[],[],[]];
+    let step = maxMatch-1;
+    let vertlim = dimension;
+    let horlim = maxMatch*dimension;
+    let down;
+    for (let i=0; i<N;i++){
+    	// Row
+    	if (i+step < vertlim) {
+    		let row = [];
+    		for (let a=i;a<=i+step;a++) row.push(a);
+    		cellsIdx[0].push(row);
+    	}
+    	// Column
+    	down = i+(step*dimension);
+    	if (down < horlim){
+    		let col = [];
+    		for (let x=0;x<=step;x++) col.push(i+(x*dimension));
+    		cellsIdx[1].push(col);
+    	}
+    	// Diagonal Right
+    	if (down+step < horlim){
+    		let diag = [];
+    		for(let x=0;x<=step;x++) diag.push(i+(x*dimension)+x);
+    		cellsIdx[2].push(diag);
+    	}
+    	// Diagonal Left
+    	if (down < horlim && down-step >= horlim-dimension){
+    		let diag = [];
+    		for(let x=0;x<=step;x++) diag.push(i+(x*dimension)-x);
+    		cellsIdx[2].push(diag);
+    	}
+    	
+    	if ((i+1)%dimension == 0) {
+    		if (vertlim < N) vertlim += dimension;
+    		if (horlim < N) horlim += dimension;
+   	}
+    	
+    };
+
 }
 
 function colorBoard(idx,color){
